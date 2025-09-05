@@ -4,12 +4,11 @@ export function initFiltering(elements) {
         Object.keys(indexes).forEach(elementName => {
             elements[elementName].append(
                 ...Object.values(indexes[elementName]).map(name => {
-                    const option = document.createElement('option');
-                    option.value = name;
-                    option.textContent = name;
-                    return option;
-                })
-            );
+                    const el = document.createElement('option');
+                    el.value = name;
+                    el.textContent = name;
+                    return el;
+                                }));
         });
     };
 
@@ -30,11 +29,12 @@ export function initFiltering(elements) {
         // #4.5 — собрать фильтры для query
         const filter = {};
         Object.keys(elements).forEach(key => {
-            const el = elements[key];
-            if (el && ['INPUT', 'SELECT'].includes(el.tagName) && el.value) {
-                filter[`filter[${el.name}]`] = el.value;
+            if(elements[key]) {
+                if (['INPUT', 'SELECT'].includes(elements[key].tagName) && elements[key].value) {
+                filter[`filter[${elements[key].name}]`] = elements[key].value;
             }
-        });
+        }
+    })
 
         // вернуть новый query с фильтрами
         return Object.keys(filter).length

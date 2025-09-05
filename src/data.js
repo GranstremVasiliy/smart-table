@@ -11,13 +11,12 @@ export function initData(sourceData) {
 
     // функция для приведения строк в нужный формат
     const mapRecords = (data) => data.map(item => ({
-        id: item.receipt_id,
-        date: item.date,
-        seller: sellers?.[item.seller_id] ?? `Unknown seller (${item.seller_id})`,
-        customer: customers?.[item.customer_id] ?? `Unknown customer (${item.customer_id})`,
-        total: item.total_amount
-    }));
-
+    id: item.receipt_id,
+    date: item.date,
+    seller: sellers[item.seller_id],
+    customer: customers[item.customer_id],
+    total: item.total_amount
+}));
     // функция получения индексов
     const getIndexes = async () => {
         if (!sellers || !customers) { // если индексы ещё не установлены, делаем запросы
@@ -50,17 +49,9 @@ export function initData(sourceData) {
     const records = await response.json();
 
     lastQuery = nextQuery;
-
-
     lastResult = {
         total: records.total,
-        items: records.items.map(item => ({
-            id: item.receipt_id,
-            date: item.date,
-            seller: sellers[item.seller_id] ?? `Unknown seller (${item.seller_id})`,
-            customer: customers[item.customer_id] ?? `Unknown customer (${item.customer_id})`,
-            total: item.total_amount
-        }))
+        items: mapRecords(records.items)
     };
 
     return lastResult;

@@ -1,11 +1,8 @@
-
 export function initSearching(searchField) {
     return (query, state, action) => {
-        // Если поле поиска пустое, просто возвращаем текущий query
-        if (!state[searchField]) {
-            return query;
+        if (state[searchField]) {
+            return { ...query, search: state[searchField] };
         }
-        // Добавляем параметр search к query
-        return Object.assign({}, query, { search: state[searchField] });
+        return query;
     };
-};
+}
