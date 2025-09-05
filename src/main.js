@@ -1,17 +1,18 @@
 import './fonts/ys-display/fonts.css'
 import './style.css'
-
-import {data as sourceData} from "./data/dataset_1.js";
-
 import {initData} from "./data.js";
 import {processFormData} from "./lib/utils.js";
-
 import {initTable} from "./components/table.js";
+import { initPagination } from './components/pagination.js';
+import { initFiltering } from './components/filtering.js';
+import { initSorting } from './components/sorting.js';
+import { initSearching } from './components/searching.js';
+
 // @todo: подключение
 
 
 // Исходные данные используемые в render()
-const api = initData(sourceData);
+const api = initData();
 
 /**
  * Сбор и обработка полей из таблицы
@@ -19,10 +20,8 @@ const api = initData(sourceData);
  */
 function collectState() {
     const state = processFormData(new FormData(sampleTable.container));
-    
     const rowsPerPage = parseInt(state.rowsPerPage);    
-const page = parseInt(state.page ?? 1);                
-
+    const page = parseInt(state.page ?? 1);                
 return {                                            
     ...state,
     rowsPerPage,
@@ -47,6 +46,7 @@ async function render(action) {
     sampleTable.render(items);
 }
 
+
 const sampleTable = initTable({
     tableTemplate: 'table',
     rowTemplate: 'row',
@@ -55,7 +55,7 @@ const sampleTable = initTable({
 }, render);
 
 // @todo: инициализация
-import { initPagination } from './components/pagination.js';
+
 const {applyPagination, updatePagination} = initPagination(
     sampleTable.pagination.elements,            
     (el, page, isCurrent) => {                    
@@ -68,17 +68,15 @@ const {applyPagination, updatePagination} = initPagination(
     }
 );
 
-import { initSorting } from './components/sorting.js';
+
 const applySorting = initSorting([
     sampleTable.header.elements.sortByDate,
     sampleTable.header.elements.sortByTotal
-
 ]);
 
-import { initFiltering } from './components/filtering.js';
 const { applyFiltering, updateIndexes } = initFiltering(sampleTable.filter.elements);
 
-import { initSearching } from './components/searching.js';
+
 const applySearching = initSearching('search');
 
 const appRoot = document.querySelector('#app');
@@ -86,12 +84,10 @@ appRoot.appendChild(sampleTable.container);
 
 async function init() {
     const indexes = await api.getIndexes();
-
     updateIndexes(sampleTable.filter.elements, {
         searchBySeller: indexes.sellers
     });
 } 
  
 init()
-
 render()
